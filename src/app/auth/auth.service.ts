@@ -32,11 +32,11 @@ export class AuthService {
             next: (res) => {
                 if (res.data?.token) {
                     const expiresInDuration = (res.data.expiresIn || 0) * 1000
-                    this.tokenTimer = setTimeout(() => {
-                        this.logOut()
-                    }, expiresInDuration);
+                    this.setAuthTimer(expiresInDuration)
                     this.token = res.data.token as string
-                    this.authStatusListener.next(true)
+                    this.authStatusListener.next(true);
+                    const expirationDate = new Date(new Date().getTime() + expiresInDuration)
+                    this.saveAuthData(this.token, expirationDate)
                     this.router.navigate(['/']);
                 }
             },
@@ -51,6 +51,43 @@ export class AuthService {
         this.router.navigate(['/']);
         if (this.tokenTimer) {
             clearTimeout(this.tokenTimer)
+        }
+        this.clearAuthData()
+    }
+    private saveAuthData(token: string, expirationDate: Date) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('expiration', expirationDate.toISOString());
+    }
+
+    private clearAuthData() {
+        localStorage.clear()
+    }
+
+    autoAuthUser () {
+        const dataFromBrowser = this.getAuthData()
+        const isExpired = (dataFromBrowser?.expirationDate || new Date()).getTime() - new Date().getTime()
+        if (dataFromBrowser?.token && isExpired) {
+            this.token = dataFromBrowser.token
+            this.setAuthTimer(isExpired)
+            this.authStatusListener.next(true);
+            this.router.navigate(['/']);
+        }
+    }
+    private setAuthTimer(expiresIn: number) {
+        this.tokenTimer = setTimeout(() => {
+            this.logOut()
+        }, expiresIn);
+    }
+    private getAuthData () {
+        const token = localStorage.getItem('token')
+        const expirationDate = localStorage.getItem('expiration')
+        if (!token || !expirationDate) {
+            return;
+            this.router.navigate(['/']);
+        }
+        return {
+            token: token,
+            expirationDate: new Date(expirationDate)
         }
     }
 }
