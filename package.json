@@ -2,22 +2,28 @@
   "name": "mean-course",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "server": "nodemon server.js"
   },
   "private": true,
   "dependencies": {
     "@angular/animations": "~13.2.0",
+    "@angular/cdk": "^13.2.0",
     "@angular/common": "~13.2.0",
     "@angular/compiler": "~13.2.0",
     "@angular/core": "~13.2.0",
     "@angular/forms": "~13.2.0",
+    "@angular/material": "^13.2.0",
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
+    "body-parser": "^1.19.1",
+    "mongodb": "^4.3.1",
+    "mongoose": "^6.1.10",
+    "multer": "^1.4.4",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
