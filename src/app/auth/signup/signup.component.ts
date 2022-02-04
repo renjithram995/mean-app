@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthData } from 'src/app/posts/auth-data.model';
+import { AuthService } from 'src/app/posts/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -7,11 +11,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignupComponent implements OnInit {
 
-  constructor() { }
-
+  constructor(private authService: AuthService, private router: Router) { }
+  public isLoading = false;
   ngOnInit(): void {
   }
-  onSignUp(form: HTMLFormElement) {
-    alert('success')
+  onSignUp(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
+    const authData: AuthData = {
+      email: form.value.email,
+      password: form.value.password
+    }
+    this.isLoading = true;
+    this.authService.createUser(authData).subscribe({
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error(err)
+        this.isLoading = false
+      }
+    })
   }
 }
