@@ -50,7 +50,8 @@ router.post("/login", (req, res) => {
         res.status(200).json({
             message: "Auth Success",
             data: {
-                token: token
+                token: token,
+                expiresIn: 3600
             }
         })
     }).catch((error) => {

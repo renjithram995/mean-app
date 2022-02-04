@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthData } from 'src/app/posts/auth-data.model';
-import { AuthService } from 'src/app/posts/auth.service';
+import { AuthData } from '../auth-data.model';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
