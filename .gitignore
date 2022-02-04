@@ -43,3 +43,5 @@ Thumbs.db
 
 #image uploads
 /backend/images
+
+/package-lock.json
