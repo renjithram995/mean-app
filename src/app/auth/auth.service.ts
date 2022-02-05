@@ -15,8 +15,14 @@ export class AuthService {
 
     private tokenTimer: ReturnType<typeof setTimeout> | undefined
 
+    private userID = ''
+
     getToken() {
         return this.token
+    }
+
+    getUserID () {
+        return this.userID
     }
 
     getAuthStatusListener() {
@@ -31,6 +37,7 @@ export class AuthService {
         this.http.post<successData>(this.userpath + 'login', authData).subscribe({
             next: (res) => {
                 if (res.data?.token) {
+                    this.userID = res.data.userId;
                     const expiresInDuration = (res.data.expiresIn || 0) * 1000
                     this.setAuthTimer(expiresInDuration)
                     this.token = res.data.token as string
@@ -46,7 +53,7 @@ export class AuthService {
         })
     }
     logOut() {
-        this.token = ''
+        this.token = this.userID = ''
         this.authStatusListener.next(false)
         this.router.navigate(['/']);
         if (this.tokenTimer) {
@@ -56,6 +63,7 @@ export class AuthService {
     }
     private saveAuthData(token: string, expirationDate: Date) {
         localStorage.setItem('token', token);
+        localStorage.setItem('userId', this.userID);
         localStorage.setItem('expiration', expirationDate.toISOString());
     }
 
@@ -80,6 +88,7 @@ export class AuthService {
     }
     private getAuthData () {
         const token = localStorage.getItem('token')
+        this.userID = localStorage.getItem('userId') || ''
         const expirationDate = localStorage.getItem('expiration')
         if (!token || !expirationDate) {
             return;

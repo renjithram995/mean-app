@@ -30,7 +30,8 @@ router.post('/', authenticatorMiddleware, multer({ storage: storage }).single('i
     const postData = new postSchema({
         title: req.body.title,
         content: req.body.content,
-        imagePath: url + "/images/" + req.file.filename
+        imagePath: url + "/images/" + req.file.filename,
+        creator: req.userData.userId
     })
     postData.save().then((result) => {
         res.status(201).json({
@@ -98,11 +99,21 @@ router.get('/:id', (req, res) => {
 
 router.delete('/:id', authenticatorMiddleware, (req, res) => {
     postSchema.deleteOne({
-        _id: req.params.id
+        _id: req.params.id,
+        creator: req.userData.userId
     }).then((result) => {
-        res.status(200).json({
-            message: 'Deleted successfully'
-        })
+        console.log(result)
+        if (result?.deletedCount > 0) {
+            res.status(200).json({
+                message: 'Deleted successfully'
+            })
+        } else {
+            res.status(401).json({
+                message: 'User authentication Failed'
+            })
+        }
+    }).catch((erro) => {
+        console.log(erro)
     })
 })
 
@@ -115,11 +126,22 @@ router.patch('/:id', multer({ storage: storage }).single('image'), (req, res) =>
     if (url) {
         post.imagePath = url
     }
-    postSchema.updateOne({ _id: req.params.id }, post).then((result) => {
-        res.status(200).json({
-            message: 'Updated successfully',
-            data: post
-        })
+    const filter = {
+        _id: req.params.id,
+        creator: req.userData.userId
+    }
+    postSchema.updateOne(filter, post).then((result) => {
+        if (result.nModified > 0) {
+            res.status(200).json({
+                message: 'Updated successfully',
+                data: post
+            })
+        } else {
+            res.status(401).json({
+                message: 'User authentication Failed',
+                data: post
+            })
+        }
     }).catch((error) => {
         console.log(error)
         res.status(400).json({

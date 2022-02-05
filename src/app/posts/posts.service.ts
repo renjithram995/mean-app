@@ -22,7 +22,8 @@ export class PostsService {
                         id: item._id,
                         title: item.title,
                         content: item.content,
-                        imagePath: item.imagePath
+                        imagePath: item.imagePath,
+                        creator: item.creator
                     } as posts
                 })
             }))

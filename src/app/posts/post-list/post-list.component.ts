@@ -1,7 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { successData } from '../common.model';
 import { posts } from '../post.model';
 import { PostsService } from '../posts.service';
 
@@ -22,8 +24,10 @@ export class PostListComponent implements OnInit, OnDestroy {
   pageSizeOption = [1, 2, 5, 7, 10]
   authStatusSubs: Subscription | undefined
   userIsAuthenticated = false
+  userId = ''
   ngOnInit(): void {
     this.fetchPosts()
+    this.userId = this.authService.getUserID()
     this.postsSub = this.postService.getPostsListener()
       .subscribe((data: posts[]) => {
         this.loadingPosts = false
@@ -31,6 +35,7 @@ export class PostListComponent implements OnInit, OnDestroy {
       })
     this.userIsAuthenticated = Boolean(this.authService.getToken())
     this.authStatusSubs = this.authService.getAuthStatusListener().subscribe((isAuthenticated) => {
+      this.userId = this.authService.getUserID()
       this.userIsAuthenticated = isAuthenticated
     })
   }
@@ -49,7 +54,13 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
   onDelete (id: string) {
     if (id) {
-      this.postService.deleteposts(id).subscribe(this.fetchPosts.bind(this))
+      this.postService.deleteposts(id).subscribe({
+        next: this.fetchPosts.bind(this),
+        error: (err: HttpErrorResponse) => {
+          const error = err.error as successData
+          console.error(error?.message || 'Delete failed')
+        }
+      })
     }
   }
   onChangedPage(eve: PageEvent) {

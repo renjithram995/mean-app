@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { AuthService } from "src/app/auth/auth.service";
 import { posts } from "../post.model";
 import { PostsService } from "../posts.service";
 import { mimeType } from "./mime-type.validator"
@@ -14,6 +15,7 @@ import { mimeType } from "./mime-type.validator"
 export class PostCreateComponent implements OnInit {
     constructor(public postService: PostsService,
         public route: ActivatedRoute,
+        private authservice: AuthService,
         private router: Router) { }
     private mode = 'create'
     private postId: string = '';
@@ -60,7 +62,8 @@ export class PostCreateComponent implements OnInit {
                 id: '',
                 title: this.form.value.title,
                 content: this.form.value.content,
-                imagePath: ''
+                imagePath: '',
+                creator: this.authservice.getUserID()
             }
             this.loadingPosts = true
             if (this.mode === 'edit') {
