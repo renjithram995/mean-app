@@ -100,7 +100,7 @@ export class PostsService {
                 //     this.postsUpdated.next([...this.posts])
                 // },
                 error: (error: HttpErrorResponse) => {
-                    console.log(error.error)
+                    console.log(error)
                 }
             })
     }
