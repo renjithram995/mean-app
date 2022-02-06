@@ -41,6 +41,11 @@ router.post('/', authenticatorMiddleware, multer({ storage: storage }).single('i
                 imagePath: result.imagePath
             }
         })
+    }).catch((error) => {
+        res.status(500).json({
+            message: error.message || "Unknown error occured",
+            error: error
+        })
     })
 })
 router.get('/count', (req, res) => {
@@ -51,6 +56,10 @@ router.get('/count', (req, res) => {
         })
 
     }).catch((e) => {
+        res.status(500).json({
+            message: error.message || "Error while fetching post",
+            error: error
+        })
         console.log(e)
     })
 })
@@ -71,6 +80,10 @@ router.get('/', (req, res) => {
         })
 
     }).catch((e) => {
+        res.status(500).json({
+            message: error.message || "Error while fetching post",
+            error: error
+        })
         console.log(e)
     })
 })
@@ -92,7 +105,7 @@ router.get('/:id', (req, res) => {
     }).catch((e) => {
         console.log(e)
         res.status(400).json({
-            message: 'Fetching of posts is failed',
+            message: e.message || 'Fetching of posts is failed',
         })
     })
 })
@@ -112,8 +125,12 @@ router.delete('/:id', authenticatorMiddleware, (req, res) => {
                 message: 'User authentication Failed'
             })
         }
-    }).catch((erro) => {
-        console.log(erro)
+    }).catch((error) => {
+        res.status(500).json({
+            message: error.message || "Error while fetching post",
+            error: error
+        })
+        console.log(error)
     })
 })
 

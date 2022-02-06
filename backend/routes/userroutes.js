@@ -23,6 +23,7 @@ router.post('/signup', async (req, res) => {
         })
     }).catch((error) => {
         res.status(500).json({
+            message: 'Invalid authentication credential',
             error: error
         })
     })
@@ -32,13 +33,13 @@ router.post("/login", (req, res) => {
     userSchema.findOne({ email: req.body.email }).then(async (user) => {
         if (!user) {
             return res.status(401).json({
-                message: "Auth failed"
+                message: "Incorrect username or password"
             });
         }
         const isValid = await bcrypt.compare(req.body.password, user.password)
         if (!isValid) {
             return res.status(401).json({
-                message: "Auth failed"
+                message: "Incorrect username or password"
             });
         }
         const token = jwt.sign({
@@ -57,7 +58,7 @@ router.post("/login", (req, res) => {
         })
     }).catch((error) => {
         res.status(401).json({
-            message: "Auth failed",
+            message: error.message || "Auth failed",
             error: error
         })
     })

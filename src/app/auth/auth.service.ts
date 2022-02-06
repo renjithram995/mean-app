@@ -48,7 +48,7 @@ export class AuthService {
                 }
             },
             error: (err) => {
-                console.error(err)
+                this.authStatusListener.error(false)
             }
         })
     }

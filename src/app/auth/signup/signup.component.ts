@@ -1,6 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ErrorResponse, successData } from 'src/app/posts/common.model';
 import { AuthData } from '../auth-data.model';
 import { AuthService } from '../auth.service';
 
@@ -28,8 +30,8 @@ export class SignupComponent implements OnInit {
       next: () => {
         this.router.navigate(['/']);
       },
-      error: (err) => {
-        console.error(err)
+      error: (err: ErrorResponse) => {
+        console.error(err?.message || 'Sign up failed')
         this.isLoading = false
       }
     })
