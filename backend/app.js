@@ -8,6 +8,7 @@ const dbName = 'postMeanApp'
 const connectionUrl = `mongodb+srv://renjithram995:rrhoeFC1Bd9qVyKC@postcluster0.6udpq.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 const postsRoute = require('./routes/postroutes')
+const userRoute = require('./routes/userroutes')
 
 // mongosh "mongodb+srv://postcluster0.6udpq.mongodb.net/postMeanApp" --username renjithram995
 mongoose.connect(connectionUrl).then(() => {
@@ -23,7 +24,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -32,7 +33,8 @@ app.use((req, res, next) => {
   next()
 })
 app.use("/images", express.static(path.join("backend/images"))) // to access static files through server
-postsRoute(app)
+app.use('/api/posts', postsRoute)
+app.use('/api/users', userRoute)
 
 
 module.exports = app
